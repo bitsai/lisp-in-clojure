@@ -1,8 +1,15 @@
-A tiny Lisp interpreter in Clojure, done by implementing apply and eval as shown on page 13 of LISP 1.5 Programmer's Manual:
+lisp-pg.clj implements eval as shown in Paul Graham's "The Roots of Lisp" paper:
+http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
+
+*** lisp-pg.clj is currently incomplete ***
+
+lisp-pm.clj implements apply and eval as shown on page 13 of LISP 1.5 Programmer's Manual:
 http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf/view
 
-Inspired by:
+tests.clj exercises the evaluators using examples from Paul Graham's paper.
+
+This project was inspired by:
 http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
 
 Notes:
-- Had to deviate from the manual in two places.  See lines marked with ";;!!" in _apply and _eval.  Still investigating.
+- lisp-pm.clj deviates from the Programmer's Manual in two places.  See the two lines marked with ";;!!" in _apply and _eval.
