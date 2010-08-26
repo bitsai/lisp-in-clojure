@@ -1,7 +1,5 @@
-lisp-pg.clj implements eval as shown in Paul Graham's "The Roots of Lisp" paper:
+lisp-pg.clj (currently incomplete) implements eval as shown in Paul Graham's "The Roots of Lisp" paper:
 http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
-
-*** lisp-pg.clj is currently incomplete ***
 
 lisp-pm.clj implements apply and eval as shown on page 13 of LISP 1.5 Programmer's Manual:
 http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf/view
