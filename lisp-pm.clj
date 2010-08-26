@@ -1,7 +1,5 @@
 (ns lisp-pm)
 
-(declare _apply _eval _evcon _evlis)
-
 (defn _atom [x]
   (cond
    (keyword? x) true
@@ -19,9 +17,11 @@
 (defn _cadar [x] (_car (_cdr (_car x))))
 (defn _caddr [x] (_car (_cdr (_cdr x))))
 
-(defn _pairlis [x y a] (concat (map vector x y) a))
-
+(defn _null [x] (empty? x))
+(defn _pairlis [x y a] (concat (map list x y) a))
 (defn _assoc [x a] (first (filter #(= x (first %)) a)))
+
+(declare _apply _eval _evcon _evlis)
 
 (defn _apply [f x a]
   (cond
@@ -48,12 +48,14 @@
    :else (_apply (_car e) (_evlis (_cdr e) a) a)))
 
 (defn _evcon [c a]
-  (if (_eval (_caar c) a) (_eval (_cadar c) a)
-      (_evcon (_cdr c) a)))
+  (cond
+   (_eval (_caar c) a) (_eval (_cadar c) a)
+   :else (_evcon (_cdr c) a)))
 
 (defn _evlis [m a]
-  (if (empty? m) []
-      (cons (_eval (_car m) a)
-	    (_evlis (_cdr m) a))))
+  (cond
+   (_null m) []
+   :else (cons (_eval (_car m) a)
+	       (_evlis (_cdr m) a))))
 
 (def env [[true true] [false false] [[] false]])
