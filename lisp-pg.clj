@@ -16,10 +16,9 @@
 (defn _caddr [x] (_car (_cdr (_cdr x))))
 (defn _caddar [x] (_car (_cdr (_cdr (_car x)))))
 
-(defn _null [x] (empty? x))
-(defn _append [x y] (concat x y))
-(defn _pair [x y] (map list x y))
-(defn _assoc [x y] (second (first (filter #(= x (first %)) y))))
+(defn _assoc [x y]
+  (let [matching-pair (first (filter #(= x (first %)) y))]
+    (second matching-pair)))
 
 (declare _eval _evcon _evlis)
 
@@ -40,10 +39,10 @@
 					(_cdr e))
 				  a))
    (= (_caar e) :label) (_eval (cons (_caddar e) (_cdr e))
-			       (cons (list (_cadar e) (_car e)) a))
+			       (cons (vector (_cadar e) (_car e)) a))
    (= (_caar e) :lambda) (_eval (_caddar e)
-				(_append (_pair (_cadar e) (_evlis (_cdr e) a))
-					 a))))
+				(concat (map vector (_cadar e) (_evlis (_cdr e) a))
+					a))))
 
 (defn _evcon [c a]
   (cond
@@ -52,7 +51,7 @@
 
 (defn _evlis [m a]
   (cond
-   (_null m) []
+   (empty? m) []
    :else (cons (_eval (_car m) a)
 	       (_evlis (_cdr m) a))))
 
