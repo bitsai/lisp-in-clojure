@@ -1,0 +1,8 @@
+A tiny Lisp interpreter in Clojure, done by implementing apply and eval as shown on page 13 of LISP 1.5 Programmer's Manual:
+http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf/view
+
+Inspired by:
+http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
+
+Notes:
+- Had to deviate from the manual in two places.  See lines marked with ";;!!" in _apply and _eval.  Still investigating.
