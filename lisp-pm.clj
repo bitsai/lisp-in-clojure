@@ -41,11 +41,11 @@
    (_eq (_car f) :lambda) (_eval (_caddr f) (_pairlis (_cadr f) x a))
    (_eq (_car f) :label) (_apply (_caddr f)
 				 x
-				 (_cons (_cons (_cadr f) (_cddr f)) a)))) ;;!!
+				 (_cons (_cons (_cadr f) (_cddr f)) a)))) ;cddr was caddr in original
 
 (defn _eval [e a]
   (cond
-   (_atom e) (_cadr (_assoc e a)) ;;!!
+   (_atom e) (_cadr (_assoc e a)) ;cadr was cdr in original
    (_atom (_car e)) (cond
 		     (_eq (_car e) :quote) (_cadr e)
 		     (_eq (_car e) :cond) (_evcon (_cdr e) a)
