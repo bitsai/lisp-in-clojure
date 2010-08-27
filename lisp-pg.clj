@@ -1,5 +1,6 @@
 (ns lisp-pg)
 
+;; primitives
 (defn _atom [x]
   (cond
    (keyword? x) true
@@ -7,42 +8,49 @@
    (false? x) true
    (empty? x) true
    :else false))
-
+(defn _eq [x y] (= x y))
 (defn _car [x] (first x))
 (defn _cdr [x] (rest x))
+(defn _cons [x y] (cons x y))
+
+;; derived
 (defn _caar [x] (_car (_car x)))
 (defn _cadr [x] (_car (_cdr x)))
 (defn _cadar [x] (_car (_cdr (_car x))))
 (defn _caddr [x] (_car (_cdr (_cdr x))))
 (defn _caddar [x] (_car (_cdr (_cdr (_car x)))))
-
+(defn _list [& es] (vec es))
+(defn _null [x] (empty? x))
+(defn _append [x y] (concat x y))
+(defn _pair [x y] (map vector x y))
 (defn _assoc [x y]
   (let [matching-pair (first (filter #(= x (first %)) y))]
     (second matching-pair)))
 
+;; interpreter
 (declare _eval _evcon _evlis)
 
 (defn _eval [e a]
   (cond
    (_atom e) (_assoc e a)
    (_atom (_car e)) (cond
-		     (= (_car e) :quote) (_cadr e)
-		     (= (_car e) :atom) (_atom (_eval (_cadr e) a))
-		     (= (_car e) :eq) (= (_eval (_cadr e) a)
-					 (_eval (_caddr e) a))
-		     (= (_car e) :car) (_car (_eval (_cadr e) a))
-		     (= (_car e) :cdr) (_cdr (_eval (_cadr e) a))
-		     (= (_car e) :cons) (cons (_eval (_cadr e) a)
-					      (_eval (_caddr e) a))
-		     (= (_car e) :cond) (_evcon (_cdr e) a)
-		     :else (_eval (cons (_assoc (_car e) a)
-					(_cdr e))
+		     (_eq (_car e) :quote) (_cadr e)
+		     (_eq (_car e) :atom) (_atom (_eval (_cadr e) a))
+		     (_eq (_car e) :eq) (_eq (_eval (_cadr e) a)
+					     (_eval (_caddr e) a))
+		     (_eq (_car e) :car) (_car (_eval (_cadr e) a))
+		     (_eq (_car e) :cdr) (_cdr (_eval (_cadr e) a))
+		     (_eq (_car e) :cons) (_cons (_eval (_cadr e) a)
+						 (_eval (_caddr e) a))
+		     (_eq (_car e) :cond) (_evcon (_cdr e) a)
+		     :else (_eval (_cons (_assoc (_car e) a)
+					 (_cdr e))
 				  a))
-   (= (_caar e) :label) (_eval (cons (_caddar e) (_cdr e))
-			       (cons (vector (_cadar e) (_car e)) a))
-   (= (_caar e) :lambda) (_eval (_caddar e)
-				(concat (map vector (_cadar e) (_evlis (_cdr e) a))
-					a))))
+   (_eq (_caar e) :label) (_eval (_cons (_caddar e) (_cdr e))
+				 (_cons (_list (_cadar e) (_car e)) a))
+   (_eq (_caar e) :lambda) (_eval (_caddar e)
+				  (_append (_pair (_cadar e) (_evlis (_cdr e) a))
+					   a))))
 
 (defn _evcon [c a]
   (cond
@@ -51,8 +59,11 @@
 
 (defn _evlis [m a]
   (cond
-   (empty? m) []
-   :else (cons (_eval (_car m) a)
-	       (_evlis (_cdr m) a))))
+   (_null m) []
+   :else (_cons (_eval (_car m) a)
+		(_evlis (_cdr m) a))))
 
-(def env [[true true] [false false] [[] false]])
+;; environment
+(def env [[true true]
+	  [false false]
+	  [[] false]])
