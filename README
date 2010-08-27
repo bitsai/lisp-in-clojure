@@ -10,4 +10,4 @@ This project was inspired by:
 http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
 
 Notes:
-1) lisp-pm.clj had to deviate from the Programmer's Manual in two places; see commented lines in _apply and _eval.  I believe this is because I use vectors instead of cons cells as the underlying data structure.  Interestingly, lisp-pg.clj is not affected by this.
+1) lisp-pm.clj had to deviate from the Programmer's Manual in some places; see commented lines in _pairlis, _apply and _eval.  I believe this is because I use vectors instead of cons cells as the underlying data structure.  Interestingly, lisp-pg.clj is not affected by this.
