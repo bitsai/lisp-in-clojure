@@ -1,9 +1,9 @@
-(ns lisp-pm)
+(ns eval-pm)
 
 ;; primitives
 (defn _atom [x]
   (cond
-   (keyword? x) true
+   (string? x) true
    (true? x) true
    (false? x) true
    (empty? x) true
@@ -32,31 +32,31 @@
    (_eq (_caar a) x) (_car a)
    :else (_assoc x (_cdr a))))
 
-;; interpreter
+;; eval and friends
 (declare _apply _eval _evcon _evlis)
 
 (defn _apply [f x a]
   (cond
    (_atom f) (cond
-	      (_eq f :car) (_caar x)
-	      (_eq f :cdr) (_cdar x)
-	      (_eq f :cons) (_cons (_car x) (_cadr x))
-	      (_eq f :atom) (_atom (_car x))
-	      (_eq f :eq) (_eq (_car x) (_cadr x))
+	      (_eq f "car") (_caar x)
+	      (_eq f "cdr") (_cdar x)
+	      (_eq f "cons") (_cons (_car x) (_cadr x))
+	      (_eq f "atom") (_atom (_car x))
+	      (_eq f "eq") (_eq (_car x) (_cadr x))
 	      :else (_apply (_eval f a) x a))
-   (_eq (_car f) :lambda) (_eval (_caddr f) (_pairlis (_cadr f) x a))
-   (_eq (_car f) :label) (_apply (_caddr f)
-				 x
-				 ;; (_cons (_cons (_cadr f) (_caddr f)) a))))
-				 (_cons (_cons (_cadr f) (_cddr f)) a))))
+   (_eq (_car f) "lambda") (_eval (_caddr f) (_pairlis (_cadr f) x a))
+   (_eq (_car f) "label") (_apply (_caddr f)
+				  x
+				  ;; (_cons (_cons (_cadr f) (_caddr f)) a))))
+				  (_cons (_cons (_cadr f) (_cddr f)) a))))
 
 (defn _eval [e a]
   (cond
    ;; (_atom e) (_cdr (_assoc e a))
    (_atom e) (_cadr (_assoc e a))
    (_atom (_car e)) (cond
-		     (_eq (_car e) :quote) (_cadr e)
-		     (_eq (_car e) :cond) (_evcon (_cdr e) a)
+		     (_eq (_car e) "quote") (_cadr e)
+		     (_eq (_car e) "cond") (_evcon (_cdr e) a)
 		     :else (_apply (_car e) (_evlis (_cdr e) a) a))
    :else (_apply (_car e) (_evlis (_cdr e) a) a)))
 
@@ -70,8 +70,3 @@
    (_null m) []
    :else (_cons (_eval (_car m) a)
 		(_evlis (_cdr m) a))))
-
-;; environment
-(def env [[true true]
-	  [false false]
-	  [[] false]])
