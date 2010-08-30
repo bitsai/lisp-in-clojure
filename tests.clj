@@ -1,70 +1,86 @@
+(ns tests
+  (:require [eval-pg :as pg])
+  (:require [eval-pm :as pm])
+  (:use [reader :only (_read)]))
+
+(def env [["true" true]
+	  ["false" false]])
+
+(defn test-eval
+  ([exp-str] (test-eval exp-str ""))
+  ([exp-str env-str] (let [test-exp (_read exp-str)
+			   test-env (_read env-str)]
+		       ;; (println (pm/_eval test-exp (concat test-env env)))
+		       (println (pg/_eval test-exp (concat test-env env))))))
+
 ;; quote
-(_eval [:quote :a] env)
-(_eval [:quote [:a :b :c]] env)
+(test-eval "(quote a)")
+;;(test-eval "'a") ;; needs support for ' macro
+(test-eval "(quote (a b c))")
+
 ;; atom
-(_eval [:atom [:quote :a]] env)
-(_eval [:atom [:quote [:a :b :c]]] env)
-(_eval [:atom [:quote []]] env)
-(_eval [:atom [:atom [:quote []]]] env)
-(_eval [:atom [:quote [:atom [:quote []]]]] env)
+(test-eval "(atom (quote a))")
+(test-eval "(atom (quote (a b c)))")
+(test-eval "(atom (quote ()))")
+(test-eval "(atom (atom (quote a)))")
+(test-eval "(atom (quote (atom (quote a))))")
+
 ;; eq
-(_eval [:eq [:quote :a] [:quote :a]] env)
-(_eval [:eq [:quote :a] [:quote :b]] env)
-(_eval [:eq [:quote []] [:quote []]] env)
+(test-eval "(eq (quote a) (quote a))")
+(test-eval "(eq (quote a) (quote b))")
+(test-eval "(eq (quote ()) (quote ()))")
+
 ;; car
-(_eval [:car [:quote [:a :b :c]]] env)
+(test-eval "(car (quote (a b c)))")
+
 ;; cdr
-(_eval [:cdr [:quote [:a :b :c]]] env)
+(test-eval "(cdr (quote (a b c)))")
+
 ;; cons
-(_eval [:cons [:quote :a] [:quote [:b :c]]] env)
-(_eval [:cons [:quote :a] [:cons [:quote :b] [:cons [:quote :c] [:quote []]]]] env)
-(_eval [:car [:cons [:quote :a] [:quote [:b :c]]]] env)
-(_eval [:cdr [:cons [:quote :a] [:quote [:b :c]]]] env)
+(test-eval "(cons (quote a) (quote (b c)))")
+(test-eval "(cons (quote a) (cons (quote b) (cons (quote c) (quote ()))))")
+(test-eval "(car (cons (quote a) (quote (b c))))")
+(test-eval "(cdr (cons (quote a) (quote (b c))))")
+
 ;; cond
-(_eval [:cond
-	[[:eq [:quote :a] [:quote :b]] [:quote :first]]
-	[[:atom [:quote :a]] [:quote :second]]] env)
+(test-eval (str "(cond ((eq (quote a) (quote b)) (quote first))"
+		"      ((atom (quote a)) (quote second)))"))
+
 ;; lambda
-(_eval [[:lambda [:x] [:cons :x [:quote [:b]]]]
-	[:quote :a]] env)
-(_eval [[:lambda [:x :y] [:cons :x [:cdr :y]]]
-	[:quote :z]
-	[:quote [:a :b :c]]] env)
-(_eval [[:lambda [:f] [:f [:quote [:b :c]]]]
-	[:quote [:lambda [:x] [:cons [:quote :a] :x]]]] env)
+(test-eval "((lambda (x) (cons x (quote (b)))) (quote a))")
+(test-eval (str "((lambda (x y) (cons x (cdr y)))"
+		" (quote z)"
+		" (quote (a b c)))"))
+(test-eval (str "((lambda (f) (f (quote (b c))))"
+		" (quote (lambda (x) (cons (quote a) x))))"))
+
 ;; label
-(_eval [[:label :subst [:lambda [:x :y :z]
-			[:cond
-			 [[:atom :z]
-			  [:cond
-			   [[:eq :z :y] :x]
-			   [true :z]]]
-			 [true [:cons
-				[:subst :x :y [:car :z]]
-				[:subst :x :y [:cdr :z]]]]]]]
-	[:quote :m]
-	[:quote :b]
-	[:quote [:a :b [:a :b :c] :d]]] env)
+(test-eval (str "((label subst (lambda (x y z)"
+		"                (cond ((atom z)"
+		"                       (cond ((eq z y) x)"
+		"                             (true z)))"
+		"                      (true (cons (subst x y (car z))"
+		"                                  (subst x y (cdr z)))))))"
+		" (quote m)"
+		" (quote b)"
+		" (quote (a b (a b c) d)))"))
+
 ;; eval
-(_eval :x
-       (concat [[:x :a] [:y :b]] env))
-(_eval [:eq [:quote :a] [:quote :a]]
-       env)
-(_eval [:cons :x [:quote [:b :c]]]
-       (concat [[:x :a] [:y :b]] env))
-(_eval [:cond
-	[[:atom :x] [:quote :atom]]
-	[true [:quote :list]]]
-       (concat [[:x [:quote [:a :b]]]] env))
-(_eval [:f [:quote [:b :c]]]
-       (concat [[:f [:lambda [:x] [:cons [:quote :a] :x]]]] env))
-(_eval [[:label :first [:lambda [:x]
-			[:cond
-			 [[:atom :x] :x]
-			 [true [:first [:car :x]]]]]]
-	:y]
-       (concat [[:y [[:a :b] [:c :d]]]] env))
-(_eval [[:lambda [:x :y] [:cons :x [:cdr :y]]]
-	[:quote :a]
-	[:quote [:b :c :d]]]
-       env)
+(test-eval "x"
+	   "((x a) (y b))")
+(test-eval "(eq (quote a) (quote a))")
+(test-eval "(cons x (quote (b c)))"
+	   "((x a) (y b))")
+(test-eval (str "(cond ((atom x) (quote atom))"
+		"      (true (quote list)))")
+	   "((x (quote (a b))))")
+(test-eval "(f (quote (b c)))"
+	   "((f (lambda (x) (cons (quote a) x))))")
+(test-eval (str "((label firstatom (lambda (x)"
+		"                    (cond ((atom x) x)"
+		"                          (true (firstatom (car x))))))"
+		" y)")
+	   "((y ((a b) (c d))))")
+(test-eval (str "((lambda (x y) (cons x (cdr y)))"
+		" (quote a)"
+		" (quote (b c d)))"))
