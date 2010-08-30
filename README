@@ -1,7 +1,7 @@
-lisp-pg.clj is an interpreter implementing eval from Paul Graham's "The Roots of Lisp" paper:
+eval-pg.clj is an interpreter implementing eval from Paul Graham's "The Roots of Lisp" paper:
 http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
 
-lisp-pm.clj is an interpreter implementing apply and eval from page 13 of LISP 1.5 Programmer's Manual:
+eval-pm.clj is an interpreter implementing apply and eval from page 13 of LISP 1.5 Programmer's Manual:
 http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf/view
 
 tests.clj tests the interpreters using examples from Paul Graham's paper.
@@ -10,4 +10,4 @@ This project was inspired by:
 http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
 
 Notes:
-1) lisp-pm.clj had to deviate from the Programmer's Manual in some places; see commented lines in _pairlis, _apply and _eval.  I believe this is because I use vectors instead of cons cells as the underlying data structure.  Interestingly, lisp-pg.clj is not affected by this.
+1) eval-pm.clj had to deviate from the Programmer's Manual in some places; see commented lines in _pairlis, _apply and _eval.  I believe this is because I use vectors instead of cons cells as the underlying data structure.  Interestingly, eval-pg.clj is not affected by this.
