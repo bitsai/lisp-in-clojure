@@ -57,3 +57,7 @@
    (empty? m) '()
    :else (cons (_eval (_car m) a)
 	       (_evlis (_cdr m) a))))
+
+;; environment
+(def env [["true" true]
+	  ["false" false]])

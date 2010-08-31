@@ -1,9 +1,6 @@
 (ns repl
-  (:use [interpreter :only (_eval)])
+  (:use [interpreter :only (_eval env)])
   (:use [reader :only (_tokenize _read)]))
-
-(def env [["true" true]
-	  ["false" false]])
 
 (defn _repl []
   (let [exp-str (read-line)

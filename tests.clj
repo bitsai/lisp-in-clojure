@@ -1,9 +1,6 @@
 (ns tests
-  (:use [interpreter :only (_eval)])
+  (:use [interpreter :only (_eval env)])
   (:use [reader :only (_read)]))
-
-(def env [["true" true]
-	  ["false" false]])
 
 (defn _test
   ([exp-str answer] (_test exp-str "" answer))
