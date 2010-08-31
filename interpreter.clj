@@ -1,5 +1,9 @@
 (ns interpreter)
 
+;; environment
+(def env [["true" true]
+	  ["false" false]])
+
 ;; primitive
 (defn _atom [x]
   (cond
@@ -20,7 +24,8 @@
 (defn _pair [x y] (map list x y))
 (defn _assoc [x y]
   (let [match (first (filter #(= x (first %)) y))]
-    (second match)))
+    (if (nil? match) (throw (Exception. (str x " not defined!")))
+	(second match))))
 
 ;; eval and friends
 (declare _eval _evcon _evlis)
@@ -54,10 +59,11 @@
 
 (defn _evlis [m a]
   (cond
-   (empty? m) '()
+   (empty? m) nil
    :else (cons (_eval (_car m) a)
 	       (_evlis (_cdr m) a))))
 
-;; environment
-(def env [["true" true]
-	  ["false" false]])
+;; exception-catching eval wrapper
+(defn evaluate [e a]
+  (try (_eval e a)
+       (catch Exception ex (.getMessage ex))))

@@ -1,23 +1,23 @@
 (ns reader
   (:require [clojure.string :as str]))
 
-(defn _tokenize [line]
+(defn tokenize [line]
   (let [tokens (-> line
 		   (str/replace "(" " ( ")
 		   (str/replace ")" " ) ")
 		   (str/split #"\s"))]
     (filter (comp not empty?) tokens)))
 
-(defn _parse
-  ([tokens] (_parse '() tokens))
-  ([acc tokens]
+(defn listify
+  ([tokens] (listify nil tokens))
+  ([l tokens]
      (let [head (first tokens)
 	   tail (rest tokens)]
        (cond
-	(empty? tokens) (first acc)
-	(= head ")") [acc tail]
-	(= head "(") (let [[sub-acc new-tokens] (_parse tail)]
-		       (_parse (concat acc (list sub-acc)) new-tokens))
-	:else (_parse (concat acc (list head)) tail)))))
+	(empty? tokens) (first l)
+	(= head ")") [l tail]
+	(= head "(") (let [[new-l new-tokens] (listify tail)]
+		       (listify (concat l (list new-l)) new-tokens))
+	:else (listify (concat l (list head)) tail)))))
 
-(defn _read [line] (_parse (_tokenize line)))
+(defn parse [line] (listify (tokenize line)))
