@@ -5,65 +5,65 @@
 	  ["false" false]])
 
 ;; primitive
-(defn _atom [x]
+(defn atom* [x]
   (cond
    (string? x) true
    (true? x) true
    (false? x) true
    (empty? x) true
    :else false))
-(defn _car [x] (first x))
-(defn _cdr [x] (next x))
+(defn car* [x] (first x))
+(defn cdr* [x] (next x))
 
 ;; derived
-(defn _caar [x] (ffirst x))
-(defn _cadr [x] (fnext x))
-(defn _cadar [x] (fnext (first x)))
-(defn _caddr [x] (fnext (next x)))
-(defn _caddar [x] (fnext (nfirst x)))
-(defn _pair [x y] (map list x y))
-(defn _assoc [x y]
+(defn caar* [x] (ffirst x))
+(defn cadr* [x] (fnext x))
+(defn cadar* [x] (fnext (first x)))
+(defn caddr* [x] (fnext (next x)))
+(defn caddar* [x] (fnext (nfirst x)))
+(defn pair* [x y] (map list x y))
+(defn assoc* [x y]
   (let [match (first (filter #(= x (first %)) y))]
     (if (nil? match) (throw (Exception. (str x " not defined!")))
 	(second match))))
 
 ;; eval and friends
-(declare _eval _evcon _evlis)
+(declare eval* evcon* evlis*)
 
-(defn _eval [e a]
+(defn eval* [e a]
   (cond
-   (_atom e) (_assoc e a)
-   (_atom (_car e)) (cond
-		     (= (_car e) "quote") (_cadr e)
-		     (= (_car e) "atom") (_atom (_eval (_cadr e) a))
-		     (= (_car e) "eq") (= (_eval (_cadr e) a)
-					  (_eval (_caddr e) a))
-		     (= (_car e) "car") (_car (_eval (_cadr e) a))
-		     (= (_car e) "cdr") (_cdr (_eval (_cadr e) a))
-		     (= (_car e) "cons") (cons (_eval (_cadr e) a)
-					       (_eval (_caddr e) a))
-		     (= (_car e) "cond") (_evcon (_cdr e) a)
-		     :else (_eval (cons (_assoc (_car e) a)
-					(_cdr e))
+   (atom* e) (assoc* e a)
+   (atom* (car* e)) (cond
+		     (= (car* e) "quote") (cadr* e)
+		     (= (car* e) "atom") (atom* (eval* (cadr* e) a))
+		     (= (car* e) "eq") (= (eval* (cadr* e) a)
+					  (eval* (caddr* e) a))
+		     (= (car* e) "car") (car* (eval* (cadr* e) a))
+		     (= (car* e) "cdr") (cdr* (eval* (cadr* e) a))
+		     (= (car* e) "cons") (cons (eval* (cadr* e) a)
+					       (eval* (caddr* e) a))
+		     (= (car* e) "cond") (evcon* (cdr* e) a)
+		     :else (eval* (cons (assoc* (car* e) a)
+					(cdr* e))
 				  a))
-   (= (_caar e) "label") (_eval (cons (_caddar e) (_cdr e))
-				(cons (list (_cadar e) (_car e)) a))
-   (= (_caar e) "lambda") (_eval (_caddar e)
-				 (concat (_pair (_cadar e) (_evlis (_cdr e) a))
+   (= (caar* e) "label") (eval* (cons (caddar* e) (cdr* e))
+				(cons (list (cadar* e) (car* e)) a))
+   (= (caar* e) "lambda") (eval* (caddar* e)
+				 (concat (pair* (cadar* e) (evlis* (cdr* e) a))
 					 a))))
 
-(defn _evcon [c a]
+(defn evcon* [c a]
   (cond
-   (_eval (_caar c) a) (_eval (_cadar c) a)
-   :else (_evcon (_cdr c) a)))
+   (eval* (caar* c) a) (eval* (cadar* c) a)
+   :else (evcon* (cdr* c) a)))
 
-(defn _evlis [m a]
+(defn evlis* [m a]
   (cond
    (empty? m) nil
-   :else (cons (_eval (_car m) a)
-	       (_evlis (_cdr m) a))))
+   :else (cons (eval* (car* m) a)
+	       (evlis* (cdr* m) a))))
 
 ;; exception-catching eval wrapper
 (defn evaluate [e a]
-  (try (_eval e a)
+  (try (eval* e a)
        (catch Exception ex (.getMessage ex))))

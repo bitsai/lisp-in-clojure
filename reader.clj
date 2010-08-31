@@ -10,14 +10,14 @@
 
 (defn listify
   ([tokens] (listify nil tokens))
-  ([l tokens]
+  ([acc tokens]
      (let [head (first tokens)
 	   tail (rest tokens)]
        (cond
-	(empty? tokens) (first l)
-	(= head ")") [l tail]
-	(= head "(") (let [[new-l new-tokens] (listify tail)]
-		       (listify (concat l (list new-l)) new-tokens))
-	:else (listify (concat l (list head)) tail)))))
+	(empty? tokens) (first acc)
+	(= head ")") [acc tail]
+	(= head "(") (let [[new-acc new-tokens] (listify tail)]
+		       (listify (concat acc (list new-acc)) new-tokens))
+	:else (listify (concat acc (list head)) tail)))))
 
 (defn parse [line] (listify (tokenize line)))
