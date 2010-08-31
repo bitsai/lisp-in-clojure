@@ -21,8 +21,6 @@ Notes:
 To-do:
 1) Throw exception if an atom has no value in the environment?
 
-2) Streamline tests.clj
+2) Implement defun, definition of new functions in environment
 
-3) Implement defun, definition of new functions in environment
-
-4) Implement ' macro
+3) Implement ' macro
