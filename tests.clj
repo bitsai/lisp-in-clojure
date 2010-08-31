@@ -8,10 +8,11 @@
 
 (defn _test
   ([exp-str] (_test exp-str ""))
-  ([exp-str env-str] (let [test-exp (_read exp-str)
-			   test-env (_read env-str)]
-		       ;; (println (pm/_eval test-exp (concat test-env env)))
-		       (println (pg/_eval test-exp (concat test-env env))))))
+  ([exp-str env-str]
+     (let [test-exp (_read exp-str)
+	   test-env (_read env-str)]
+       ;; (println (pm/_eval test-exp (concat test-env env)))
+       (println (pg/_eval test-exp (concat test-env env))))))
 
 ;; quote
 (_test "(quote a)")
