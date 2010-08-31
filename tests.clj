@@ -1,6 +1,5 @@
 (ns tests
-  (:require [eval-pg :as pg])
-  (:require [eval-pm :as pm])
+  (:use [interpreter :only (_eval)])
   (:use [reader :only (_read)]))
 
 (def env [["true" true]
@@ -11,19 +10,20 @@
   ([exp-str env-str answer]
      (let [test-exp (_read exp-str)
 	   test-env (_read env-str)
-	   ;; result (pm/_eval test_exp (concat test-env env))
-	   result (pg/_eval test-exp (concat test-env env))]
-       (cond (= result answer) (println "OK")
-	     :else (println "FAIL")))))
+	   result (_eval test-exp (concat test-env env))]
+       (if (= result answer) (println "OK")
+	   (println "FAIL")))))
 
-(println "\nquote")
+(println "\n(QUOTE)")
 (_test "(quote a)"
        "a")
-;;(_test "'a") ;; needs support for ' macro
+;; needs support for '
+;; (_test "'a",
+;;        "a")
 (_test "(quote (a b c))"
        '("a" "b" "c"))
 
-(println "\natom")
+(println "\n(ATOM)")
 (_test "(atom (quote a))"
        true)
 (_test "(atom (quote (a b c)))"
@@ -35,7 +35,7 @@
 (_test "(atom (quote (atom (quote a))))"
        false)
 
-(println "\neq")
+(println "\n(EQ)")
 (_test "(eq (quote a) (quote a))"
        true)
 (_test "(eq (quote a) (quote b))"
@@ -43,15 +43,15 @@
 (_test "(eq (quote ()) (quote ()))"
        true)
 
-(println "\ncar")
+(println "\n(CAR)")
 (_test "(car (quote (a b c)))"
        "a")
 
-(println "\ncdr")
+(println "\n(CDR)")
 (_test "(cdr (quote (a b c)))"
        '("b" "c"))
 
-(println "\ncons")
+(println "\n(CONS)")
 (_test "(cons (quote a) (quote (b c)))"
        '("a" "b" "c"))
 (_test "(cons (quote a) (cons (quote b) (cons (quote c) (quote ()))))"
@@ -61,12 +61,12 @@
 (_test "(cdr (cons (quote a) (quote (b c))))"
        '("b" "c"))
 
-(println "\ncond")
+(println "\n(COND)")
 (_test (str "(cond ((eq (quote a) (quote b)) (quote first))"
 	    "      ((atom (quote a)) (quote second)))")
        "second")
 
-(println "\nlambda")
+(println "\n(LAMBDA)")
 (_test "((lambda (x) (cons x (quote (b)))) (quote a))"
        '("a" "b"))
 (_test (str "((lambda (x y) (cons x (cdr y)))"
@@ -77,7 +77,7 @@
 	    " (quote (lambda (x) (cons (quote a) x))))")
        '("a" "b" "c"))
 
-(println "\nlabel")
+(println "\n(LABEL)")
 (_test "(subst (quote m) (quote b) (quote (a b (a b c) d)))"
        (str "((subst (label subst (lambda (x y z)"
 	    "                       (cond ((atom z)"
@@ -87,7 +87,7 @@
 	    "                                         (subst x y (cdr z)))))))))")
        '("a" "m" ("a" "m" "c") "d"))
 
-(println "\neval")
+(println "\n(EVAL)")
 (_test "x"
        "((x a) (y b))"
        "a")

@@ -1,26 +1,19 @@
-eval_pg.clj implements eval from Paul Graham's "The Roots of Lisp" paper:
+interpreter.clj implements eval from Paul Graham's "The Roots of Lisp" paper:
 http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
 
-eval_pm.clj implements apply and eval from page 13 of LISP 1.5 Programmer's Manual:
-http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf/view
-
-reader.clj implements conversion of expression strings to nested vectors.
+reader.clj implements conversion of expression strings to nested lists.
 
 repl.clj runs a simple REPL.
 
 tests.clj runs examples from Paul Graham's paper.
 
 Inspired by:
-1) http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
-
-2) http://nakkaya.com/2010/08/24/a-micro-manual-for-lisp-implemented-in-c/
-
-Notes:
-1) eval_pm.clj had to deviate from the Programmer's Manual in some places; see commented lines in _pairlis, _apply and _eval.  I believe this is because I use vectors instead of cons cells as the underlying data structure.  Interestingly, eval_pg.clj is not affected by this.
+http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
+http://nakkaya.com/2010/08/24/a-micro-manual-for-lisp-implemented-in-c/
 
 To-do:
 1) Throw exception if an atom has no value in the environment?
 
-2) Implement defun, definition of new functions in environment
+2) Implement defun
 
-3) Implement ' macro
+3) Implement '
