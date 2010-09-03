@@ -4,8 +4,8 @@
 
 (println "REPL started!")
 
-(loop [line (read-line)
-       tokens (tokenize line)]
+(let [line (read-line)
+      tokens (tokenize line)]
   (when (not= (first tokens) "exit")
     (println (eval* (read* line) env))
     (recur)))
