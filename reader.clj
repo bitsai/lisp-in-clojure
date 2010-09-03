@@ -5,19 +5,25 @@
   (let [tokens (-> line
 		   (str/replace "(" " ( ")
 		   (str/replace ")" " ) ")
+		   (str/replace "'" " ' ")
 		   (str/split #"\s"))]
     (filter (comp not empty?) tokens)))
 
 (defn listify
-  ([tokens] (listify nil tokens))
-  ([acc tokens]
+  ([tokens] (first (second (listify tokens nil))))
+  ([tokens acc]
      (let [head (first tokens)
 	   tail (rest tokens)]
        (cond
-	(empty? tokens) (first acc)
-	(= head ")") [acc tail]
-	(= head "(") (let [[new-acc new-tokens] (listify tail)]
-		       (listify (concat acc (list new-acc)) new-tokens))
-	:else (listify (concat acc (list head)) tail)))))
+	(empty? tokens) [nil acc]
+	(= head "(") (let [[new-tokens sub-acc] (listify tail nil)
+			   new-acc (concat acc (list sub-acc))]
+		       (listify new-tokens new-acc))
+	(= head ")") [tail acc]
+	(= head "'") (let [[new-tokens sub-acc] (listify tail nil)
+			   quoted (list "quote" (first sub-acc))
+			   new-acc (concat acc (list quoted) (rest sub-acc))]
+		       (listify new-tokens new-acc))
+	:else (listify tail (concat acc (list head)))))))
 
 (defn parse [line] (listify (tokenize line)))
