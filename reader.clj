@@ -23,7 +23,7 @@
 	(= head "'") (let [[new-tokens sub-acc] (listify tail nil)
 			   quoted (list "quote" (first sub-acc))
 			   new-acc (concat acc (list quoted) (rest sub-acc))]
-		       (listify new-tokens new-acc))
+		       [new-tokens new-acc])
 	:else (listify tail (concat acc (list head)))))))
 
 (defn parse [line] (listify (tokenize line)))
