@@ -1,13 +1,13 @@
 (ns tests
-  (:use [interpreter :only (env evaluate)])
-  (:use [reader :only (parse)]))
+  (:use [eval :only (env eval*)])
+  (:use [reader :only (read*)]))
 
 (defn run
   ([exp-str answer] (run exp-str "" answer))
   ([exp-str env-str answer]
-     (let [test-exp (parse exp-str)
-	   test-env (concat env (parse env-str))
-	   result (evaluate test-exp test-env)]
+     (let [test-exp (read* exp-str)
+	   test-env (concat env (read* env-str))
+	   result (eval* test-exp test-env)]
        (if (= result answer) (println "OK")
 	   (println "FAIL")))))
 

@@ -26,4 +26,4 @@
 		       [new-tokens new-acc])
 	:else (listify tail (concat acc (list head)))))))
 
-(defn parse [line] (listify (tokenize line)))
+(defn read* [line] (listify (tokenize line)))

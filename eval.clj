@@ -1,4 +1,4 @@
-(ns interpreter)
+(ns eval)
 
 ;; environment
 (def env [["true" true]
@@ -31,26 +31,29 @@
 (declare eval* evcon* evlis*)
 
 (defn eval* [e a]
-  (cond
-   (atom* e) (assoc* e a)
-   (atom* (car* e)) (cond
-		     (= (car* e) "quote") (cadr* e)
-		     (= (car* e) "atom") (atom* (eval* (cadr* e) a))
-		     (= (car* e) "eq") (= (eval* (cadr* e) a)
-					  (eval* (caddr* e) a))
-		     (= (car* e) "car") (car* (eval* (cadr* e) a))
-		     (= (car* e) "cdr") (cdr* (eval* (cadr* e) a))
-		     (= (car* e) "cons") (cons (eval* (cadr* e) a)
-					       (eval* (caddr* e) a))
-		     (= (car* e) "cond") (evcon* (cdr* e) a)
-		     :else (eval* (cons (assoc* (car* e) a)
-					(cdr* e))
-				  a))
-   (= (caar* e) "label") (eval* (cons (caddar* e) (cdr* e))
-				(cons (list (cadar* e) (car* e)) a))
-   (= (caar* e) "lambda") (eval* (caddar* e)
-				 (concat (pair* (cadar* e) (evlis* (cdr* e) a))
-					 a))))
+  (try
+    (cond
+     (atom* e) (assoc* e a)
+     (atom* (car* e)) (cond
+		       (= (car* e) "quote") (cadr* e)
+		       (= (car* e) "atom") (atom* (eval* (cadr* e) a))
+		       (= (car* e) "eq") (= (eval* (cadr* e) a)
+					    (eval* (caddr* e) a))
+		       (= (car* e) "car") (car* (eval* (cadr* e) a))
+		       (= (car* e) "cdr") (cdr* (eval* (cadr* e) a))
+		       (= (car* e) "cons") (cons (eval* (cadr* e) a)
+						 (eval* (caddr* e) a))
+		       (= (car* e) "cond") (evcon* (cdr* e) a)
+		       :else (eval* (cons (assoc* (car* e) a)
+					  (cdr* e))
+				    a))
+     (= (caar* e) "label") (eval* (cons (caddar* e) (cdr* e))
+				  (cons (list (cadar* e) (car* e)) a))
+     (= (caar* e) "lambda") (eval* (caddar* e)
+				   (concat (pair* (cadar* e)
+						  (evlis* (cdr* e) a))
+					   a)))
+    (catch Exception ex (.getMessage ex))))
 
 (defn evcon* [c a]
   (cond
@@ -62,8 +65,3 @@
    (empty? m) nil
    :else (cons (eval* (car* m) a)
 	       (evlis* (cdr* m) a))))
-
-;; exception-catching eval wrapper
-(defn evaluate [e a]
-  (try (eval* e a)
-       (catch Exception ex (.getMessage ex))))

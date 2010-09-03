@@ -1,4 +1,4 @@
-interpreter.clj implements eval from Paul Graham's "The Roots of Lisp" paper:
+eval.clj implements eval from Paul Graham's "The Roots of Lisp" paper:
 http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
 
 reader.clj implements conversion of expression strings to nested lists.

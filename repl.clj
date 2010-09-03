@@ -1,11 +1,11 @@
 (ns repl
-  (:use [interpreter :only (env evaluate)])
-  (:use [reader :only (tokenize parse)]))
+  (:use [eval :only (env eval*)])
+  (:use [reader :only (read* tokenize)]))
 
 (println "REPL started!")
 
-(let [line (read-line)
-      tokens (tokenize line)]
+(loop [line (read-line)
+       tokens (tokenize line)]
   (when (not= (first tokens) "exit")
-    (println (evaluate (parse line) env))
+    (println (eval* (read* line) env))
     (recur)))
