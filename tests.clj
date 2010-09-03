@@ -6,75 +6,75 @@
   ([exp-str answer] (run exp-str "" answer))
   ([exp-str env-str answer]
      (let [test-exp (parse exp-str)
-	   test-env (parse env-str)
-	   result (evaluate test-exp (concat test-env env))]
+	   test-env (concat env (parse env-str))
+	   result (evaluate test-exp test-env)]
        (if (= result answer) (println "OK")
 	   (println "FAIL")))))
 
 (println "\n(QUOTE)")
 (run "(quote a)"
      "a")
-;; (run "'a",
-;;        "a")
+(run "'a",
+     "a")
 (run "(quote (a b c))"
      '("a" "b" "c"))
 
 (println "\n(ATOM)")
-(run "(atom (quote a))"
+(run "(atom 'a)"
      true)
-(run "(atom (quote (a b c)))"
+(run "(atom '(a b c))"
      false)
-(run "(atom (quote ()))"
+(run "(atom '())"
      true)
-(run "(atom (atom (quote a)))"
+(run "(atom (atom 'a))"
      true)
-(run "(atom (quote (atom (quote a))))"
+(run "(atom '(atom 'a))"
      false)
 
 (println "\n(EQ)")
-(run "(eq (quote a) (quote a))"
+(run "(eq 'a 'a)"
      true)
-(run "(eq (quote a) (quote b))"
+(run "(eq 'a 'b)"
      false)
-(run "(eq (quote ()) (quote ()))"
+(run "(eq '() '())"
      true)
 
 (println "\n(CAR)")
-(run "(car (quote (a b c)))"
+(run "(car '(a b c))"
      "a")
 
 (println "\n(CDR)")
-(run "(cdr (quote (a b c)))"
+(run "(cdr '(a b c))"
      '("b" "c"))
 
 (println "\n(CONS)")
-(run "(cons (quote a) (quote (b c)))"
+(run "(cons 'a '(b c))"
      '("a" "b" "c"))
-(run "(cons (quote a) (cons (quote b) (cons (quote c) (quote ()))))"
+(run "(cons 'a (cons 'b (cons 'c '())))"
      '("a" "b" "c"))
-(run "(car (cons (quote a) (quote (b c))))"
+(run "(car (cons 'a '(b c)))"
      "a")
-(run "(cdr (cons (quote a) (quote (b c))))"
+(run "(cdr (cons 'a '(b c)))"
      '("b" "c"))
 
 (println "\n(COND)")
-(run (str "(cond ((eq (quote a) (quote b)) (quote first))"
-	  "      ((atom (quote a)) (quote second)))")
+(run (str "(cond ((eq 'a 'b) 'first)"
+	  "      ((atom 'a)  'second))")
      "second")
 
 (println "\n(LAMBDA)")
-(run "((lambda (x) (cons x (quote (b)))) (quote a))"
+(run "((lambda (x) (cons x '(b))) 'a)"
      '("a" "b"))
 (run (str "((lambda (x y) (cons x (cdr y)))"
-	  " (quote z)"
-	  " (quote (a b c)))")
+	  " 'z"
+	  " '(a b c))")
      '("z" "b" "c"))
-(run (str "((lambda (f) (f (quote (b c))))"
-	  " (quote (lambda (x) (cons (quote a) x))))")
+(run (str "((lambda (f) (f '(b c)))"
+	  " '(lambda (x) (cons 'a x)))")
      '("a" "b" "c"))
 
 (println "\n(LABEL)")
-(run "(subst (quote m) (quote b) (quote (a b (a b c) d)))"
+(run "(subst 'm 'b '(a b (a b c) d))"
      (str "((subst (label subst (lambda (x y z)"
 	  "                       (cond ((atom z)"
 	  "                              (cond ((eq z y) x)"
@@ -87,17 +87,17 @@
 (run "x"
      "((x a) (y b))"
      "a")
-(run "(eq (quote a) (quote a))"
+(run "(eq 'a 'a)"
      true)
-(run "(cons x (quote (b c)))"
+(run "(cons x '(b c))"
      "((x a) (y b))"
      '("a" "b" "c"))
-(run (str "(cond ((atom x) (quote atom))"
-	  "      (true (quote list)))")
-     "((x (quote (a b))))"
+(run (str "(cond ((atom x) 'atom)"
+	  "      (true 'list))")
+     "((x '(a b)))"
      "list")
-(run "(f (quote (b c)))"
-     "((f (lambda (x) (cons (quote a) x))))"
+(run "(f '(b c))"
+     "((f (lambda (x) (cons 'a x))))"
      '("a" "b" "c"))
 (run (str "((label firstatom (lambda (x)"
 	  "                    (cond ((atom x) x)"
@@ -106,6 +106,6 @@
      "((y ((a b) (c d))))"
      "a")
 (run (str "((lambda (x y) (cons x (cdr y)))"
-	  " (quote a)"
-	  " (quote (b c d)))")
+	  " 'a"
+	  " '(b c d))")
      '("a" "c" "d"))
