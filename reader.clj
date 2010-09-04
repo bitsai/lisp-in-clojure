@@ -1,8 +1,8 @@
 (ns reader
   (:require [clojure.string :as str]))
 
-(defn tokenize [line]
-  (let [tokens (-> line
+(defn tokenize [exp]
+  (let [tokens (-> exp
 		   (str/replace "(" " ( ")
 		   (str/replace ")" " ) ")
 		   (str/replace "'" " ' ")
@@ -11,19 +11,19 @@
 
 (defn listify
   ([tokens] (first (second (listify tokens nil))))
-  ([tokens acc]
+  ([tokens lst]
      (let [head (first tokens)
 	   tail (rest tokens)]
        (cond
-	(empty? tokens) [nil acc]
-	(= head "(") (let [[new-tokens sub-acc] (listify tail nil)
-			   new-acc (concat acc (list sub-acc))]
-		       (listify new-tokens new-acc))
-	(= head ")") [tail acc]
-	(= head "'") (let [[new-tokens sub-acc] (listify tail nil)
-			   quoted (list "quote" (first sub-acc))
-			   new-acc (concat acc (list quoted) (rest sub-acc))]
-		       [new-tokens new-acc])
-	:else (listify tail (concat acc (list head)))))))
+	(empty? tokens) [nil lst]
+	(= head "(") (let [[new-tokens sub-lst] (listify tail nil)
+			   new-lst (concat lst (list sub-lst))]
+		       (listify new-tokens new-lst))
+	(= head ")") [tail lst]
+	(= head "'") (let [[new-tokens sub-lst] (listify tail nil)
+			   q (list "quote" (first sub-lst))
+			   new-lst (concat lst (list q) (rest sub-lst))]
+		       [new-tokens new-lst])
+	:else (listify tail (concat lst (list head)))))))
 
-(defn read* [line] (listify (tokenize line)))
+(defn read* [exp] (listify (tokenize exp)))
