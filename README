@@ -1,15 +1,14 @@
 eval.clj implements eval from Paul Graham's "The Roots of Lisp" paper:
 http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
 
-reader.clj implements conversion of expression strings to nested lists.
+reader.clj implements parsing of expressions into nested lists.
 
 repl.clj runs a simple REPL.
 
-tests.clj runs examples from Paul Graham's paper.
+tests.clj runs various examples from Paul Graham's paper.
 
 Inspired by:
 http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
-http://nakkaya.com/2010/08/24/a-micro-manual-for-lisp-implemented-in-c/
 
 To-do:
-1) Implement defun
+1) defun eval and run an interpreter in the interpreter!

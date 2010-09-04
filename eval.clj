@@ -1,8 +1,8 @@
 (ns eval)
 
 ;; environment
-(def env [["true" true]
-	  ["false" false]])
+(def env (ref [["true" true]
+	       ["false" false]]))
 
 ;; primitive
 (defn atom* [x]
@@ -21,14 +21,15 @@
 (defn cadar* [x] (fnext (first x)))
 (defn caddr* [x] (fnext (next x)))
 (defn caddar* [x] (fnext (nfirst x)))
+(defn cadddr* [x] (fnext (nnext x)))
 (defn pair* [x y] (map list x y))
 (defn assoc* [x y]
-  (let [match (first (filter #(= x (first %)) y))]
+  (let [match (first (filter #(= x (first %)) @y))]
     (if (nil? match) (throw (Exception. (str x " not defined!")))
 	(second match))))
 
 ;; eval and friends
-(declare eval* evcon* evlis*)
+(declare eval* evcon* evlis* defun*)
 
 (defn eval* [e a]
   (try
@@ -44,15 +45,19 @@
 		       (= (car* e) "cons") (cons (eval* (cadr* e) a)
 						 (eval* (caddr* e) a))
 		       (= (car* e) "cond") (evcon* (cdr* e) a)
+		       (= (car* e) "defun") (defun* e a)
 		       :else (eval* (cons (assoc* (car* e) a)
 					  (cdr* e))
 				    a))
      (= (caar* e) "label") (eval* (cons (caddar* e) (cdr* e))
-				  (cons (list (cadar* e) (car* e)) a))
+				  (ref
+				   (cons (list (cadar* e) (car* e))
+					 @a)))
      (= (caar* e) "lambda") (eval* (caddar* e)
-				   (concat (pair* (cadar* e)
-						  (evlis* (cdr* e) a))
-					   a)))
+				   (ref
+				    (concat (pair* (cadar* e)
+						   (evlis* (cdr* e) a))
+					    @a))))
     (catch Exception ex (.getMessage ex))))
 
 (defn evcon* [c a]
@@ -65,3 +70,11 @@
    (empty? m) nil
    :else (cons (eval* (car* m) a)
 	       (evlis* (cdr* m) a))))
+
+(defn defun* [e a]
+  (let [name (cadr* e)
+	args (caddr* e)
+	body (cadddr* e)
+	label-fn ["label" name ["lambda" args body]]]
+    (dosync (alter a conj [name label-fn]))
+    nil))
