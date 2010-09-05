@@ -1,6 +1,24 @@
 eval.clj implements eval from Paul Graham's "The Roots of Lisp" paper:
 http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
 
+extras.clj defun's additional functions in the interpreter environment:
+subst
+caar
+cadr
+cadar
+caddr
+caddar
+tuple
+null
+and
+not
+append
+pair
+assoc
+eval (yep, you can run a Lisp interpreter inside the interpreter!)
+evcon
+evlis
+
 reader.clj implements parsing of expressions into nested lists.
 
 repl.clj runs a simple REPL.
@@ -9,6 +27,3 @@ tests.clj runs various examples from Paul Graham's paper.
 
 Inspired by:
 http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
-
-To-do:
-1) defun eval and run an interpreter in the interpreter!
