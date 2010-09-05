@@ -6,7 +6,9 @@
    (string? x) "t"
    (empty? x) "t"
    :else "f"))
-(defn eq [x y] (if (= x y) "t" "f"))
+(defn eq [x y]
+  (if (= x y) "t"
+      "f"))
 (defn car [x] (first x))
 (defn cdr [x] (next x))
 
