@@ -50,12 +50,12 @@
 		   a))
      (= (caar e) "label")
      (eval* (cons (caddar e) (cdr e))
-	    (ref (cons (list (cadar e) (car e))
-		       @a)))
+	    (atom (cons (list (cadar e) (car e))
+			@a)))
      (= (caar e) "lambda")
      (eval* (caddar e)
-	    (ref (concat (pair (cadar e) (evlis (cdr e) a))
-			 @a))))
+	    (atom (concat (pair (cadar e) (evlis (cdr e) a))
+			  @a))))
     (catch Exception ex (.getMessage ex))))
 
 (defn evcon [c a]
@@ -72,11 +72,11 @@
 	args (caddr e)
 	body (cadddr e)
 	label-fn ["label" name ["lambda" args body]]]
-    (dosync (alter a conj [name label-fn]))
+    (swap! a conj [name label-fn])
     nil))
 
 ;; environment
-(def env (ref []))
+(def env (atom []))
 
 ;; defun additional functions
 (load-file "extras.clj")
