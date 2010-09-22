@@ -21,9 +21,9 @@ evlis
 
 reader.clj implements parsing of expressions into nested lists.
 
-repl.clj runs a simple REPL.
+repl.clj (clj repl.clj) launches a simple REPL (enter "exit" to quit).
 
-tests.clj runs various examples from Paul Graham's paper.
+tests.clj (clj tests.clj) tests the interpreter using examples from Paul Graham's paper.
 
 Inspired by:
 http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
