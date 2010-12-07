@@ -5,7 +5,7 @@
 (println "REPL started!")
 
 (let [exp (read-line)
-      tokens (tokenize exp)]
-  (when (not= (first tokens) "exit")
+      first-word (first (tokenize exp))]
+  (when-not (= first-word "exit")
     (println (eval* (read* exp) env))
     (recur)))

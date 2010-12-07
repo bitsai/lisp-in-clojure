@@ -22,11 +22,9 @@
 (defn cadddr [x] (first (rest (rest (rest x)))))
 (defn pair [x y] (map list x y))
 (defn assoc* [x y]
-  (let [matches? #(= x (first %))
-	match (first (filter matches? @y))]
-    (if (nil? match)
-      (throw (Exception. (str x " not defined!")))
-      (second match))))
+  (if-let [matches (for [[a b] @y :when (= x a)] b)]
+    (first matches)
+    (throw (Exception. (str x " not defined!")))))
 
 ;; eval and friends
 (declare eval* evcon evlis defun)
@@ -72,10 +70,8 @@
 (defn defun [e a]
   (let [name (cadr e)
 	args (caddr e)
-	body (cadddr e)
-	label-fn ["label" name ["lambda" args body]]]
-    (swap! a conj [name label-fn])
-    nil))
+	body (cadddr e)]
+    (swap! a conj [name ["label" name ["lambda" args body]]])))
 
 ;; environment
 (def env (atom []))
