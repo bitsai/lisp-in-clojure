@@ -10,18 +10,16 @@
     (remove empty? tokens)))
 
 (defn listify
-  ([tokens] (ffirst (listify '() tokens)))
-  ([acc [x & xs :as tokens]]
+  ([tokens] (ffirst (listify [] tokens)))
+  ([l [t & ts :as tokens]]
      (cond
-      (empty? tokens) [acc nil]
-      (= x "(") (let [[sub-list new-tokens] (listify nil xs)
-		      new-acc (concat acc (list sub-list))]
-		  (listify new-acc new-tokens))
-      (= x ")") [acc xs]
-      (= x "'") (let [[sub-list new-tokens] (listify nil xs)
-		      quoted (list "quote" (first sub-list))
-		      new-acc (concat acc (list quoted) (rest sub-list))]
-		  [new-acc new-tokens])
-      :else (listify (concat acc (list x)) xs))))
+      (empty? tokens) [l nil]
+      (= t "(") (let [[sub-l new-tokens] (listify [] ts)]
+		  (listify (conj l sub-l) new-tokens))
+      (= t ")") [l ts]
+      (= t "'") (let [[[x & xs] new-tokens] (listify [] ts)
+		      new-l (apply conj l ["quote" x] xs)]
+		  [new-l new-tokens])
+      :else (listify (conj l t) ts))))
 
 (defn read* [exp] (listify (tokenize exp)))

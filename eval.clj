@@ -7,24 +7,26 @@
    (empty? x) "t"
    :else "f"))
 (defn eq [x y]
-  (if (= x y) "t"
-      "f"))
+  (if (= x y)
+    "t"
+    "f"))
 (defn car [x] (first x))
-(defn cdr [x] (next x))
+(defn cdr [x] (rest x))
 
 ;; derived
-(defn caar [x] (ffirst x))
-(defn cadr [x] (fnext x))
-(defn cadar [x] (fnext (first x)))
-(defn caddr [x] (fnext (next x)))
-(defn caddar [x] (fnext (nfirst x)))
-(defn cadddr [x] (fnext (nnext x)))
+(defn caar [x] (first (first x)))
+(defn cadr [x] (first (rest x)))
+(defn cadar [x] (first (rest (first x))))
+(defn caddr [x] (first (rest (rest x))))
+(defn caddar [x] (first (rest (rest (first x)))))
+(defn cadddr [x] (first (rest (rest (rest x)))))
 (defn pair [x y] (map list x y))
 (defn assoc* [x y]
   (let [matches? #(= x (first %))
 	match (first (filter matches? @y))]
-    (if (nil? match) (throw (Exception. (str x " not defined!")))
-	(second match))))
+    (if (nil? match)
+      (throw (Exception. (str x " not defined!")))
+      (second match))))
 
 ;; eval and friends
 (declare eval* evcon evlis defun)
