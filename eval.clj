@@ -70,9 +70,3 @@
 	body (cadddr e)
 	new-pair [name ["label" name ["lambda" args body]]]]
     (swap! a conj new-pair)))
-
-;; environment
-(def env (atom []))
-
-;; defun additional functions
-(load-file "extras.clj")
