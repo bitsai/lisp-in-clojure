@@ -1,13 +1,12 @@
 (ns repl
-  (:use [eval :only (eval*)])
   (:use [env :only (make-env)])
-  (:use [reader :only (read* tokenize)]))
+  (:use [eval :only (eval*)])
+  (:use [reader :only (read*)]))
 
 (println "REPL started!")
 
-(let [exp (read-line)
-      first-word (first (tokenize exp))
-      env (make-env)]
-  (when-not (= first-word "exit")
-    (println (eval* (read* exp) env))
-    (recur)))
+(loop [env (make-env)]
+  (let [exp (read-line)]
+    (if-not (empty? exp)
+      (println (eval* (read* exp) env))))
+  (recur env))
