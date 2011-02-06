@@ -1,4 +1,4 @@
-eval.clj implements eval as described in Paul Graham's "The Roots of Lisp" paper:
+eval.clj implements the 'eval' function described in Paul Graham's "The Roots of Lisp" paper:
 http://lib.store.yahoo.net/lib/paulgraham/jmc.ps
 
 env.clj defines the environment, which contains additional functions added by evaluating 'defun' expressions:
@@ -21,7 +21,7 @@ evlis
 
 reader.clj implements parsing of expressions into nested lists.
 
-repl.clj (clj repl.clj) launches a simple REPL (enter "exit" to quit).
+repl.clj (clj repl.clj) launches a simple REPL (CTRL-C to quit).
 
 tests.clj (clj tests.clj) tests the interpreter using examples from Paul Graham's paper.
 
