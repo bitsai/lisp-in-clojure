@@ -9,30 +9,43 @@
 	"               ('t z)))"
 	"        ('t (cons (subst x y (car z))"
 	"                  (subst x y (cdr z))))))")
+
    "(defun caar (x) (car (car x)))"
+
    "(defun cadr (x) (car (cdr x)))"
+
    "(defun cadar (x) (car (cdr (car x))))"
+
    "(defun caddr (x) (car (cdr (cdr x))))"
+
    "(defun caddar (x) (car (cdr (cdr (car x)))))"
+
    "(defun tuple (x y) (cons x (cons y '())))"
+
    "(defun null (x) (eq x '()))"
+
    (str "(defun and (x y)"
 	"  (cond (x (cond (y 't) ('t 'f)))"
 	"        ('t 'f)))")
+
    (str "(defun not (x)"
 	"  (cond (x 'f)"
 	"        ('t 't)))")
+
    (str "(defun append (x y)"
 	"  (cond ((null x) y)"
 	"        ('t (cons (car x) (append (cdr x) y)))))")
+
    (str "(defun pair (x y)"
 	"  (cond ((and (null x) (null y)) '())"
 	"        ((and (not (atom x)) (not (atom y)))"
 	"         (cons (tuple (car x) (car y))"
 	"               (pair (cdr x) (cdr y))))))")
+
    (str "(defun assoc (x y)"
 	"  (cond ((eq (caar y) x) (cadar y))"
 	"        ('t (assoc x (cdr y)))))")
+
    (str "(defun eval (e a)"
 	"  (cond"
 	"    ((atom e) (assoc e a))"
@@ -57,16 +70,18 @@
 	"     (eval (caddar e)"
 	"           (append (pair (cadar e) (evlis (cdr e) a))"
 	"                   a)))))")
+
    (str "(defun evcon (c a)"
 	"  (cond ((eval (caar c) a) (eval (cadar c) a))"
 	"        ('t (evcon (cdr c) a))))")
+
    (str "(defun evlis (m a)"
 	"  (cond ((null m) '())"
 	"        ('t (cons (eval  (car m) a)"
 	"                  (evlis (cdr m) a)))))")])
 
 (defn make-env []
-  (let [env (atom [])
-	execute (fn [exp] (eval* (read* exp) env))]
-    (dorun (map execute defun-exps))
+  (let [env (atom [])]
+    (doseq [exp defun-exps]
+      (eval* (read* exp) env))
     env))

@@ -25,7 +25,15 @@
     (throw (Exception. (str x " not defined!")))))
 
 ;; eval and friends
-(declare eval* evcon evlis defun)
+(declare eval* evcon evlis)
+
+(defn defun [e a]
+  (let [name (cadr e)
+	args (caddr e)
+	body (cadddr e)
+	new-pair [name ["label" name ["lambda" args body]]]]
+    (swap! a conj new-pair)
+    (str "'" name "' defined!")))
 
 (defn eval* [e a]
   (try
@@ -63,10 +71,3 @@
   (cond (empty? m) nil
 	:else (cons (eval* (first m) a)
 		    (evlis (rest m) a))))
-
-(defn defun [e a]
-  (let [name (cadr e)
-	args (caddr e)
-	body (cadddr e)
-	new-pair [name ["label" name ["lambda" args body]]]]
-    (swap! a conj new-pair)))

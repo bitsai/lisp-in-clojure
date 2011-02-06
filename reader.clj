@@ -9,17 +9,17 @@
 		   (str/split #"\s"))]
     (remove empty? tokens)))
 
-(defn listify
-  ([tokens] (ffirst (listify [] tokens)))
-  ([l [t & ts :as tokens]]
-     (cond
-      (empty? tokens) [l nil]
-      (= t "(") (let [[sub-l new-tokens] (listify [] ts)]
-		  (listify (conj l sub-l) new-tokens))
-      (= t ")") [l ts]
-      (= t "'") (let [[[x & xs] new-tokens] (listify [] ts)
-		      new-l (apply conj l ["quote" x] xs)]
-		  [new-l new-tokens])
-      :else (listify (conj l t) ts))))
+(defn read-list [list-so-far [t & ts]]
+  (cond
+   (nil? t) [list-so-far nil]
+   (= t ")") [list-so-far ts]
+   (= t "(") (let [[sub-list next-ts] (read-list [] ts)]
+	       (read-list (conj list-so-far sub-list) next-ts))
+   (= t "'") (let [[[x & xs] next-ts] (read-list [] ts)]
+	       [(apply conj list-so-far ["quote" x] xs) next-ts])
+   :else (read-list (conj list-so-far t) ts)))
 
-(defn read* [exp] (listify (tokenize exp)))
+(defn micro-read [tokens]
+  (ffirst (read-list [] tokens)))
+
+(defn read* [exp] (micro-read (tokenize exp)))

@@ -1,8 +1,8 @@
 (ns tests
-  (:use [clojure.test :only (deftest are run-tests)])
-  (:use [eval :only (eval*)])
   (:use [env :only (make-env)])
-  (:use [reader :only (read*)]))
+  (:use [eval :only (eval*)])
+  (:use [reader :only (read*)])
+  (:use [clojure.test :only (are deftest run-tests)]))
 
 (let [env (make-env)]
   (deftest tests
