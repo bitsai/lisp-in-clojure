@@ -19,7 +19,7 @@ eval (yep, you can run a Lisp interpreter inside the interpreter!)
 evcon
 evlis
 
-reader.clj implements parsing of expressions into nested lists; naming conventions borrowed from the simplified reader in "An Introduction to Scheme and its Implementation":
+reader.clj implements (and adds support for the quote special form to) the simplified reader in "An Introduction to Scheme and its Implementation":
 http://www-pu.informatik.uni-tuebingen.de/users/sperber/pfg-2001/scheme/schintro-v14/schintro_115.html#SEC135
 
 repl.clj (clj repl.clj) launches a simple REPL (CTRL-C to quit).

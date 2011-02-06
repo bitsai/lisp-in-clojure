@@ -9,17 +9,23 @@
 		   (str/split #"\s"))]
     (remove empty? tokens)))
 
-(defn read-list [list-so-far [t & ts]]
+(declare micro-read read-list)
+
+(defn micro-read [[t & ts]]
   (cond
-   (nil? t) [list-so-far nil]
-   (= t ")") [list-so-far ts]
-   (= t "(") (let [[sub-list next-ts] (read-list [] ts)]
-	       (read-list (conj list-so-far sub-list) next-ts))
-   (= t "'") (let [[[x & xs] next-ts] (read-list [] ts)]
-	       [(apply conj list-so-far ["quote" x] xs) next-ts])
-   :else (read-list (conj list-so-far t) ts)))
+   (= t "(") (read-list [] ts)
+   (= t "'") (let [[new-t new-ts] (micro-read ts)]
+	       [["quote" new-t] new-ts])
+   :else [t ts]))
 
-(defn micro-read [tokens]
-  (ffirst (read-list [] tokens)))
+(defn read-list [list-so-far tokens]
+  (let [[t ts] (micro-read tokens)]
+    (cond
+     (= t ")") [list-so-far ts]
+     (= t "(") (let [[new-list new-ts] (read-list [] ts)]
+		 (read-list (conj list-so-far new-list) new-ts))
+     :else (read-list (conj list-so-far t) ts))))
 
-(defn read* [exp] (micro-read (tokenize exp)))
+(defn read* [exp]
+  (let [[nested-lists _] (micro-read (tokenize exp))]
+    nested-lists))
