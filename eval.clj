@@ -61,13 +61,16 @@
      (eval* (caddar e)
 	    (atom (concat (pair (cadar e) (evlis (rest e) a))
 			  @a))))
-    (catch Exception ex (.getMessage ex))))
+    (catch Exception ex
+      (.getMessage ex))))
 
 (defn evcon [c a]
-  (cond (= "t" (eval* (caar c) a)) (eval* (cadar c) a)
-	:else (evcon (rest c) a)))
+  (cond
+   (= "t" (eval* (caar c) a)) (eval* (cadar c) a)
+   :else (evcon (rest c) a)))
 
 (defn evlis [m a]
-  (cond (empty? m) nil
-	:else (cons (eval* (first m) a)
-		    (evlis (rest m) a))))
+  (cond
+   (empty? m) nil
+   :else (cons (eval* (first m) a)
+	       (evlis (rest m) a))))
