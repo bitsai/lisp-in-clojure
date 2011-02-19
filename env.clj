@@ -14,15 +14,18 @@
 
    "(defun cadr (x) (car (cdr x)))"
 
+   "(defun cdar (x) (cdr (car x)))"
+
    "(defun cadar (x) (car (cdr (car x))))"
 
    "(defun caddr (x) (car (cdr (cdr x))))"
 
    "(defun caddar (x) (car (cdr (cdr (car x)))))"
 
-   "(defun tuple (x y) (cons x (cons y '())))"
+   "(defun list (x y) (cons x (cons y '())))"
 
-   "(defun null (x) (eq x '()))"
+   (str "(defun null (x)"
+	"  (eq x '()))")
 
    (str "(defun and (x y)"
 	"  (cond (x (cond (y 't) ('t '())))"
@@ -39,7 +42,7 @@
    (str "(defun pair (x y)"
 	"  (cond ((and (null x) (null y)) '())"
 	"        ((and (not (atom x)) (not (atom y)))"
-	"         (cons (tuple (car x) (car y))"
+	"         (cons (list (car x) (car y))"
 	"               (pair (cdr x) (cdr y))))))")
 
    (str "(defun assoc (x y)"
@@ -65,14 +68,15 @@
 	"                 a))))"
 	"    ((eq (caar e) 'label)"
 	"     (eval (cons (caddar e) (cdr e))"
-	"           (cons (tuple (cadar e) (car e)) a)))"
+	"           (cons (list (cadar e) (car e)) a)))"
 	"    ((eq (caar e) 'lambda)"
 	"     (eval (caddar e)"
 	"           (append (pair (cadar e) (evlis (cdr e) a))"
 	"                   a)))))")
 
    (str "(defun evcon (c a)"
-	"  (cond ((eval (caar c) a) (eval (cadar c) a))"
+	"  (cond ((eval (caar c) a)"
+	"         (eval (cadar c) a))"
 	"        ('t (evcon (cdr c) a))))")
 
    (str "(defun evlis (m a)"

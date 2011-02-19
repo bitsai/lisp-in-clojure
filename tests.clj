@@ -59,38 +59,33 @@
 	 "(cdr (cons 'a '(b c)))"
 	 '("b" "c")
 
-	 "(cond ((eq 'a 'b) 'first) ((atom 'a) 'second))"
+	 (str "(cond ((eq 'a 'b) 'first)"
+	      "      ((atom 'a) 'second))")
 	 "second"
 	 
 	 "((lambda (x) (cons x '(b))) 'a)"
 	 '("a" "b")
 
-	 "((lambda (x y) (cons x (cdr y))) 'z '(a b c))"
+	 (str "((lambda (x y) (cons x (cdr y)))"
+	      " 'z"
+	      " '(a b c))")
 	 '("z" "b" "c")
 
-	 "((lambda (f) (f '(b c))) '(lambda (x) (cons 'a x)))"
+	 (str "((lambda (f) (f '(b c)))"
+	      " '(lambda (x) (cons 'a x)))")
 	 '("a" "b" "c")
 
 	 "(subst 'm 'b '(a b (a b c) d))"
 	 '("a" "m" ("a" "m" "c") "d")
 
-	 "(caar '((a b x) (c d) e))"
-	 "a"
-
-	 "(cadr '((a b x) (c d) e))"
+	 "(cadr '((a b) (c d) e))"
 	 '("c" "d")
 
-	 "(cadar '((a b x) (c d) e))"
-	 "b"
-
-	 "(caddr '((a b x) (c d) e))"
+	 "(caddr '((a b) (c d) e))"
 	 "e"
 
-	 "(caddar '((a b x) (c d) e))"
-	 "x"
-
-	 "(tuple 'a 'b)"
-	 '("a" "b")
+	 "(cdar '((a b) (c d) e))"
+	 '("b")
 
 	 "(null 'a)"
 	 '()
@@ -125,19 +120,18 @@
 	 "(assoc 'x '((x new) (x a) (y b)))"
 	 "new"
 
-	 (str "(eval 'x"
-	      "      '((x a) (y b)))")
+	 "(eval 'x '((x a) (y b)))"
 	 "a"
 
-	 (str "(eval '(eq 'a 'a)"
-	      "      '())")
+	 "(eval '(eq 'a 'a) '())"
 	 "t"
 
 	 (str "(eval '(cons x '(b c))"
 	      "      '((x a) (y b)))")
 	 '("a" "b" "c")
 	 
-	 (str "(eval '(cond ((atom x) 'atom) ('t 'list))"
+	 (str "(eval '(cond ((atom x) 'atom)"
+	      "             ('t 'list))"
 	      "      '((x '(a b))))")
 	 "list"
 	 
@@ -145,8 +139,9 @@
 	      "      '((f (lambda (x) (cons 'a x)))))")
 	 '("a" "b" "c")
 	 
-	 (str "(eval '((label first (lambda (x) (cond ((atom x) x)"
-	      "                                       ('t (first (car x))))))"
+	 (str "(eval '((label firstatom (lambda (x)"
+	      "                           (cond ((atom x) x)"
+	      "                                 ('t (firstatom (car x))))))"
 	      "        y)"
 	      "      '((y ((a b) (c d)))))")
 	 "a"
