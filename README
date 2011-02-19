@@ -5,10 +5,11 @@ env.clj defines the environment, which contains additional functions added by ev
 subst
 caar
 cadr
+cdar
 cadar
 caddr
 caddar
-tuple
+list
 null
 and
 not
