@@ -71,6 +71,6 @@
 
 (defn evlis [m a]
   (cond
-   (empty? m) nil
+   (empty? m) '()
    :else (cons (eval* (first m) a)
 	       (evlis (rest m) a))))
