@@ -15,7 +15,7 @@
 	 "a"
 
 	 "(quote (a b c))"
-	 ["a" "b" "c"]
+	 '("a" "b" "c")
 
 	 "(atom 'a)"
 	 "t"
@@ -45,40 +45,40 @@
 	 "a"
 
 	 "(cdr '(a b c))"
-	 ["b" "c"]
+	 '("b" "c")
 
 	 "(cons 'a '(b c))"
-	 ["a" "b" "c"]
+	 '("a" "b" "c")
 
 	 "(cons 'a (cons 'b (cons 'c '())))"
-	 ["a" "b" "c"]
+	 '("a" "b" "c")
 
 	 "(car (cons 'a '(b c)))"
 	 "a"
 
 	 "(cdr (cons 'a '(b c)))"
-	 ["b" "c"]
+	 '("b" "c")
 
 	 "(cond ((eq 'a 'b) 'first) ((atom 'a) 'second))"
 	 "second"
 	 
 	 "((lambda (x) (cons x '(b))) 'a)"
-	 ["a" "b"]
+	 '("a" "b")
 
 	 "((lambda (x y) (cons x (cdr y))) 'z '(a b c))"
-	 ["z" "b" "c"]
+	 '("z" "b" "c")
 
 	 "((lambda (f) (f '(b c))) '(lambda (x) (cons 'a x)))"
-	 ["a" "b" "c"]
+	 '("a" "b" "c")
 
 	 "(subst 'm 'b '(a b (a b c) d))"
-	 ["a" "m" ["a" "m" "c"] "d"]
+	 '("a" "m" ("a" "m" "c") "d")
 
 	 "(caar '((a b x) (c d) e))"
 	 "a"
 
 	 "(cadr '((a b x) (c d) e))"
-	 ["c" "d"]
+	 '("c" "d")
 
 	 "(cadar '((a b x) (c d) e))"
 	 "b"
@@ -90,7 +90,7 @@
 	 "x"
 
 	 "(tuple 'a 'b)"
-	 ["a" "b"]
+	 '("a" "b")
 
 	 "(null 'a)"
 	 '()
@@ -111,13 +111,13 @@
 	 "t"
 
 	 "(append '(a b) '(c d))"
-	 ["a" "b" "c" "d"]
+	 '("a" "b" "c" "d")
 
 	 "(append '() '(c d))"
-	 ["c" "d"]
+	 '("c" "d")
 
 	 "(pair '(x y z) '(a b c))"
-	 [["x" "a"] ["y" "b"] ["z" "c"]]
+	 '(("x" "a") ("y" "b") ("z" "c"))
 
 	 "(assoc 'x '((x a) (y b)))"
 	 "a"
@@ -135,7 +135,7 @@
 
 	 (str "(eval '(cons x '(b c))"
 	      "      '((x a) (y b)))")
-	 ["a" "b" "c"]
+	 '("a" "b" "c")
 	 
 	 (str "(eval '(cond ((atom x) 'atom) ('t 'list))"
 	      "      '((x '(a b))))")
@@ -143,7 +143,7 @@
 	 
 	 (str "(eval '(f '(b c))"
 	      "      '((f (lambda (x) (cons 'a x)))))")
-	 ["a" "b" "c"]
+	 '("a" "b" "c")
 	 
 	 (str "(eval '((label first (lambda (x) (cond ((atom x) x)"
 	      "                                       ('t (first (car x))))))"
@@ -155,6 +155,6 @@
 	      "        'a"
 	      "        '(b c d))"
 	      "      '())")
-	 ["a" "c" "d"])))
+	 '("a" "c" "d"))))
 
 (run-tests)
