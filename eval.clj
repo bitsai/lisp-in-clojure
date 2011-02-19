@@ -5,11 +5,11 @@
   (cond
    (string? x) "t"
    (empty? x) "t"
-   :else "f"))
+   :else '()))
 (defn eq [x y]
   (if (= x y)
     "t"
-    "f"))
+    '()))
 
 (defn caar [x] (first (first x)))
 (defn cadr [x] (first (rest x)))

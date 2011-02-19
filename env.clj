@@ -25,11 +25,11 @@
    "(defun null (x) (eq x '()))"
 
    (str "(defun and (x y)"
-	"  (cond (x (cond (y 't) ('t 'f)))"
-	"        ('t 'f)))")
+	"  (cond (x (cond (y 't) ('t '())))"
+	"        ('t '())))")
 
    (str "(defun not (x)"
-	"  (cond (x 'f)"
+	"  (cond (x '())"
 	"        ('t 't)))")
 
    (str "(defun append (x y)"
