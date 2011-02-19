@@ -1,6 +1,6 @@
 (ns eval)
 
-;; primitive
+;; helpers
 (defn atom* [x]
   (cond
    (string? x) "t"
@@ -11,7 +11,6 @@
     "t"
     "f"))
 
-;; derived
 (defn caar [x] (first (first x)))
 (defn cadr [x] (first (rest x)))
 (defn cadar [x] (first (rest (first x))))
@@ -19,13 +18,11 @@
 (defn caddar [x] (first (rest (rest (first x)))))
 (defn cadddr [x] (first (rest (rest (rest x)))))
 (defn pair [x y] (map list x y))
-(defn assoc* [x y]
-  (if-let [matches (seq (for [[a b] @y :when (= x a)] b))]
-    (first matches)
-    (throw (Exception. (str x " not defined!")))))
-
-;; eval and friends
-(declare eval* evcon evlis)
+(defn assoc* [x [[a b :as y] & ys]]
+  (cond
+   (nil? y) (throw (Exception. (str "'" x "' not defined!")))
+   (= a x) b
+   :else (recur x ys)))
 
 (defn defun [e a]
   (let [name (cadr e)
@@ -35,10 +32,13 @@
     (swap! a conj new-pair)
     (str "'" name "' defined!")))
 
+;; eval and friends
+(declare eval* evcon evlis)
+
 (defn eval* [e a]
   (try
     (cond
-     (= "t" (atom* e)) (assoc* e a)
+     (= "t" (atom* e)) (assoc* e @a)
      (= "t" (atom* (first e)))
      (cond
       (= (first e) "quote") (cadr e)
@@ -51,7 +51,7 @@
 				   (eval* (caddr e) a))
       (= (first e) "cond")  (evcon (rest e) a)
       (= (first e) "defun") (defun e a)
-      :else (eval* (cons (assoc* (first e) a)
+      :else (eval* (cons (assoc* (first e) @a)
 			 (rest e))
 		   a))
      (= (caar e) "label")
