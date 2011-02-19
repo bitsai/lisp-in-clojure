@@ -6,7 +6,9 @@
 (println "REPL started!")
 
 (loop [env (make-env)]
-  (let [exp (read-line)]
-    (if-not (empty? exp)
-      (println (eval* (read* exp) env))))
+  (if-let [chars (seq (read-line))]
+    (try
+      (println (eval* (read* (apply str chars)) env))
+      (catch Exception ex
+	(println (.getMessage ex)))))
   (recur env))

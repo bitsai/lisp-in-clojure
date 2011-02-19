@@ -36,33 +36,30 @@
 (declare eval* evcon evlis)
 
 (defn eval* [e a]
-  (try
-    (cond
-     (= "t" (atom* e)) (assoc* e @a)
-     (= "t" (atom* (first e)))
-     (cond
-      (= (first e) "quote") (cadr e)
-      (= (first e) "atom")  (atom* (eval* (cadr e) a))
-      (= (first e) "eq")    (eq    (eval* (cadr e) a)
-				   (eval* (caddr e) a))
-      (= (first e) "car")   (first (eval* (cadr e) a))
-      (= (first e) "cdr")   (rest  (eval* (cadr e) a))
-      (= (first e) "cons")  (cons  (eval* (cadr e) a)
-				   (eval* (caddr e) a))
-      (= (first e) "cond")  (evcon (rest e) a)
-      (= (first e) "defun") (defun e a)
-      :else (eval* (cons (assoc* (first e) @a)
-			 (rest e))
-		   a))
-     (= (caar e) "label")
-     (eval* (cons (caddar e) (rest e))
-	    (atom (cons (list (cadar e) (first e)) @a)))
-     (= (caar e) "lambda")
-     (eval* (caddar e)
-	    (atom (concat (pair (cadar e) (evlis (rest e) a))
-			  @a))))
-    (catch Exception ex
-      (.getMessage ex))))
+  (cond
+   (= "t" (atom* e)) (assoc* e @a)
+   (= "t" (atom* (first e)))
+   (cond
+    (= (first e) "quote") (cadr e)
+    (= (first e) "atom")  (atom* (eval* (cadr e) a))
+    (= (first e) "eq")    (eq    (eval* (cadr e) a)
+				 (eval* (caddr e) a))
+    (= (first e) "car")   (first (eval* (cadr e) a))
+    (= (first e) "cdr")   (rest  (eval* (cadr e) a))
+    (= (first e) "cons")  (cons  (eval* (cadr e) a)
+				 (eval* (caddr e) a))
+    (= (first e) "cond")  (evcon (rest e) a)
+    (= (first e) "defun") (defun e a)
+    :else (eval* (cons (assoc* (first e) @a)
+		       (rest e))
+		 a))
+   (= (caar e) "label")
+   (eval* (cons (caddar e) (rest e))
+	  (atom (cons (list (cadar e) (first e)) @a)))
+   (= (caar e) "lambda")
+   (eval* (caddar e)
+	  (atom (concat (pair (cadar e) (evlis (rest e) a))
+			@a)))))
 
 (defn evcon [c a]
   (cond
