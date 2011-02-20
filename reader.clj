@@ -2,12 +2,12 @@
   (:require [clojure.string :as str]))
 
 (defn tokenize [exp]
-  (let [tokens (-> exp
-		   (str/replace "(" " ( ")
-		   (str/replace ")" " ) ")
-		   (str/replace "'" " ' ")
-		   (str/split #"\s"))]
-    (remove empty? tokens)))
+  (-> exp
+      (str/replace "(" " ( ")
+      (str/replace ")" " ) ")
+      (str/replace "'" " ' ")
+      (str/split #"\s+")
+      (rest)))
 
 (declare micro-read read-list)
 
@@ -27,5 +27,4 @@
      :else (read-list (conj list-so-far t) ts))))
 
 (defn read* [exp]
-  (let [[nested-lists _] (micro-read (tokenize exp))]
-    nested-lists))
+  (first (micro-read (tokenize exp))))
