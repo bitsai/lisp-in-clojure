@@ -18,11 +18,11 @@
 (defn caddar [x] (first (rest (rest (first x)))))
 (defn cadddr [x] (first (rest (rest (rest x)))))
 (defn pair [x y] (map list x y))
-(defn assoc* [x [[a b] & ys]]
+(defn assoc* [x [[a b :as y] & ys]]
   (cond
-   (= a x) b
-   (seq? ys) (recur x ys)
-   :else (throw (Exception. (str "'" x "' not defined!")))))
+   (nil? y) (throw (Exception. (str "'" x "' not defined!")))
+   (= x a) b
+   :else (recur x ys)))
 
 (defn defun [e a]
   (let [name (cadr e)
