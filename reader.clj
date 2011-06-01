@@ -22,8 +22,8 @@
     (case t
           ")" [(reverse list-so-far) ts]
           "(" (let [[new-list new-tokens] (read-list '() ts)]
-                (read-list (conj list-so-far new-list) new-tokens))
-          (read-list (conj list-so-far t) ts))))
+                (read-list (cons new-list list-so-far) new-tokens))
+          (read-list (cons t list-so-far) ts))))
 
 (defn read* [exp]
   (first (micro-read (tokenize exp))))
