@@ -60,7 +60,7 @@
 	 '("b" "c")
 
 	 (str "(cond ((eq 'a 'b) 'first)"
-	      "      ((atom 'a) 'second))")
+	      "      ((atom 'a)  'second))")
 	 "second"
 	 
 	 "((lambda (x) (cons x '(b))) 'a)"
