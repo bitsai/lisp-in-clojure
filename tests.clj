@@ -75,6 +75,15 @@
 	      " '(lambda (x) (cons 'a x)))")
 	 '("a" "b" "c")
 
+         (str "((label subst (lambda (x y z)"
+              "                (cond ((atom z)"
+              "                       (cond ((eq z y) x)"
+              "                             ('t z)))"
+              "                      ('t (cons (subst x y (car z))"
+              "                                (subst x y (cdr z)))))))"
+              " 'm 'b '(a b (a b c) d))")
+         '("a" "m" ("a" "m" "c") "d")
+
 	 "(subst 'm 'b '(a b (a b c) d))"
 	 '("a" "m" ("a" "m" "c") "d")
 
@@ -150,6 +159,18 @@
 	      "        'a"
 	      "        '(b c d))"
 	      "      '())")
-	 '("a" "c" "d"))))
+	 '("a" "c" "d")
+
+         "(defun test (xs) (car xs))"
+         "'test' defined!"
+
+         "(test '(1 2 3))"
+         "1"
+
+         "(defun test (xs) (cdr xs))"
+         "'test' defined!"
+
+         "(test '(1 2 3))"
+         '("2" "3"))))
 
 (run-tests)
