@@ -2,12 +2,11 @@
   (:require [clojure.string :as str]))
 
 (defn tokenize [exp]
-  (-> exp
-      (str/replace "(" " ( ")
-      (str/replace ")" " ) ")
-      (str/replace "'" " ' ")
-      (str/split #"\s+")
-      (rest)))
+  (remove empty? (-> exp
+                     (str/replace "(" " ( ")
+                     (str/replace ")" " ) ")
+                     (str/replace "'" " ' ")
+                     (str/split #"\s+"))))
 
 (declare micro-read read-list)
 
