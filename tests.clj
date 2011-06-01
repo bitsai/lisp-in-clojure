@@ -6,7 +6,7 @@
 
 (let [env (make-env)]
   (deftest tests
-    (are [exp answer] (= answer (eval* (read* exp) env))
+    (are [exp answer] (= (eval* (read* exp) env) answer)
 
 	 "(quote a)"
 	 "a"
