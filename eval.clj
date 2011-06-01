@@ -14,15 +14,13 @@
 
 (defn caddar [x] (first (rest (rest (first x)))))
 
-(defn pair [x y] (map list x y))
-
-(defn assoc* [x [[a b :as y] & ys]]
-  (cond (nil? y) (throw (Exception. (str "'" x "' not defined!")))
-        (= x a) b
-        :else (recur x ys)))
+(defn assoc* [x y]
+  (if-let [value (y x)]
+    value
+    (throw (Exception. (str "'" x "' not defined!")))))
 
 (defn defun [[_ name args body] a]
-  (swap! a conj [name ["label" name ["lambda" args body]]])
+  (swap! a assoc name ["label" name ["lambda" args body]])
   (str "'" name "' defined!"))
 
 (declare eval* evcon evlis)
@@ -47,12 +45,10 @@
                      a))
         (= (ffirst e) "label")
         (eval* (cons (caddar e) (rest e))
-               (atom (cons (list (cadar e) (first e))
-                           @a)))
+               (atom (assoc @a (cadar e) (first e))))
         (= (ffirst e) "lambda")
         (eval* (caddar e)
-               (atom (concat (pair (cadar e) (evlis (rest e) a))
-                             @a)))))
+               (atom (merge @a (zipmap (cadar e) (evlis (rest e) a)))))))
 
 (defn evcon [c a]
   (if (= "t" (eval* (ffirst c) a))
