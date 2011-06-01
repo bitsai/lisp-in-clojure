@@ -85,7 +85,7 @@
 	"                  (evlis (cdr m) a)))))")])
 
 (defn make-env []
-  (let [env (atom [])]
+  (let [env (atom '())]
     (doseq [exp defun-exps]
       (eval* (read* exp) env))
     env))
