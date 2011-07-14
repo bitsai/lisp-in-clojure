@@ -27,5 +27,4 @@ repl.clj (clj repl.clj) launches a simple REPL (CTRL-C to quit).
 
 tests.clj (clj tests.clj) tests the interpreter using examples from Paul Graham's paper.
 
-Inspired by:
-http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
+Inspired by: http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red
