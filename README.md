@@ -1,4 +1,4 @@
-[Inspiration](http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red)
+Inspired by [Jim Weirich's Ruby Lisp interpreter](http://onestepback.org/index.cgi/Tech/Ruby/LispInRuby.red).
 
 eval.clj implements the 'eval' function described in Paul Graham's ["The Roots of Lisp" paper](http://lib.store.yahoo.net/lib/paulgraham/jmc.ps)
 
