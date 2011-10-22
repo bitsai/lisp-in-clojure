@@ -1,14 +1,14 @@
 (ns repl
-  (:use [env :only (make-env)])
-  (:use [eval :only (eval*)])
-  (:use [reader :only (read*)]))
+  (:require [env :as env]
+            [eval :as eval]
+            [reader :as reader]))
 
 (println "REPL started!")
 
-(loop [env (make-env)]
+(loop [env (env/make-env)]
   (if-let [chars (seq (read-line))]
     (try
-      (println (eval* (read* (apply str chars)) env))
+      (println (eval/eval* (reader/read* (apply str chars)) env))
       (catch Exception ex
 	(println (.getMessage ex)))))
   (recur env))

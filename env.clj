@@ -1,6 +1,6 @@
 (ns env
-  (:use [eval :only (eval*)])
-  (:use [reader :only (read*)]))
+  (:require [eval :as eval]
+            [reader :as reader]))
 
 (def defun-exps
   [(str "(defun subst (x y z)"
@@ -87,5 +87,5 @@
 (defn make-env []
   (let [env (atom {})]
     (doseq [exp defun-exps]
-      (eval* (read* exp) env))
+      (eval/eval* (reader/read* exp) env))
     env))
